@@ -22,7 +22,7 @@ export class UsersService {
     private studentProfileRepository: Repository<StudentProfile>,
   ) {}
 
-  async create(data: CreateUserDto) {
+  async createStudent(data: CreateUserDto) {
     const userExists = await this.userRepository.findOneBy({
       email: data.email,
     });

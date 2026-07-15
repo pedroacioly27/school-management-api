@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Inject,
-  Post,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
-import { User } from './entities/user.entity';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AuthGuard } from '../auth/auth.guard';
@@ -18,8 +9,8 @@ import { CreateTeacherDto } from './dto/create-teacher.dto';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
   @Post()
-  create(@Body() data: CreateUserDto) {
-    return this.usersService.create(data);
+  createStudent(@Body() data: CreateUserDto) {
+    return this.usersService.createStudent(data);
   }
 
   @UseGuards(AuthGuard, new RolesGuard(['DIRECTOR']))

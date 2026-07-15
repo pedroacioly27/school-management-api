@@ -17,6 +17,6 @@ export class StudentProfile {
   @JoinColumn()
   user: User;
 
-  @ManyToOne(() => SchoolClass, (cls) => cls.student)
-  class: SchoolClass;
+  @ManyToOne(() => SchoolClass, (cls) => cls.students)
+  schoolClass: SchoolClass;
 }
