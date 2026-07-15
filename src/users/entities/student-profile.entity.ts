@@ -1,5 +1,12 @@
-import { Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { User } from './user.entity';
+import { SchoolClass } from 'src/school-class/entities/school-class.entity';
 
 @Entity('student_profiles')
 export class StudentProfile {
@@ -9,4 +16,7 @@ export class StudentProfile {
   @OneToOne(() => User, (user) => user.studentProfile)
   @JoinColumn()
   user: User;
+
+  @ManyToOne(() => SchoolClass, (cls) => cls.student)
+  class: SchoolClass;
 }

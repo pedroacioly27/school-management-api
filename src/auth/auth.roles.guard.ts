@@ -3,13 +3,14 @@ import {
   ExecutionContext,
   ForbiddenException,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private allowedRoles: string[]) {}
   canActivate(context: ExecutionContext): boolean {
-    const request = context.switchToHttp().getNext();
+    const request = context.switchToHttp().getRequest();
 
     const user = request.user;
 
@@ -17,10 +18,10 @@ export class RolesGuard implements CanActivate {
       throw new ForbiddenException();
     }
 
-    const hasPermission = this.allowedRoles.includes(user.roles);
+    const hasPermission = this.allowedRoles.includes(user.role);
 
     if (!hasPermission) {
-      throw new ForbiddenException();
+      throw new UnauthorizedException();
     }
 
     return true;

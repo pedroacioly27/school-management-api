@@ -7,6 +7,7 @@ import { StudentProfile } from './entities/student-profile.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import bcrypt from 'bcrypt';
 import { Role } from 'src/common/enums/role.enum';
+import { CreateTeacherDto } from './dto/create-teacher.dto';
 
 @Injectable()
 export class UsersService {
@@ -21,7 +22,6 @@ export class UsersService {
     private studentProfileRepository: Repository<StudentProfile>,
   ) {}
 
-  
   async create(data: CreateUserDto) {
     const userExists = await this.userRepository.findOneBy({
       email: data.email,
@@ -50,7 +50,10 @@ export class UsersService {
     return newUser;
   }
 
-  async createTeacher(data: CreateUserDto) {
+  async createTeacher(data: CreateTeacherDto) {
+    if (!data.subject) {
+      throw new BadRequestException('Subject is required');
+    }
     const userExists = await this.userRepository.findOneBy({
       email: data.email,
     });
@@ -71,11 +74,18 @@ export class UsersService {
 
     const teacherProfile = this.teacherProfileRepository.create({
       user: savedUser,
+      subject: data.subject,
     });
 
     await this.teacherProfileRepository.save(teacherProfile);
 
-    const { password: _, ...newTeacher } = savedUser;
+    const newTeacher = {
+      id: savedUser.id,
+      name: savedUser.name,
+      email: savedUser.email,
+      role: savedUser.role,
+      subject: data.subject,
+    };
 
     return newTeacher;
   }

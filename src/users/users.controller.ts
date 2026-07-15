@@ -11,6 +11,8 @@ import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AuthGuard } from '../auth/auth.guard';
+import { RolesGuard } from 'src/auth/auth.roles.guard';
+import { CreateTeacherDto } from './dto/create-teacher.dto';
 
 @Controller('users')
 export class UsersController {
@@ -20,17 +22,9 @@ export class UsersController {
     return this.usersService.create(data);
   }
 
+  @UseGuards(AuthGuard, new RolesGuard(['DIRECTOR']))
   @Post('teacher')
-  createTeacher(@Body() data: CreateUserDto) {
+  createTeacher(@Body() data: CreateTeacherDto) {
     return this.usersService.createTeacher(data);
-  }
-
-  @UseGuards(AuthGuard)
-  @Get('test')
-  test(@Req() req) {
-    return {
-      message: 'passou zezinho',
-      user: req.user,
-    };
   }
 }

@@ -7,7 +7,6 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
-import { Observable } from 'rxjs';
 import { JwtPayload } from './types/jwt-payload.interface';
 
 @Injectable()

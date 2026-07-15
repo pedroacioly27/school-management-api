@@ -1,7 +1,14 @@
 import { Role } from 'src/common/enums/role.enum';
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { TeacherProfile } from './teacher-profile.entity';
 import { StudentProfile } from './student-profile.entity';
+import { Grade } from 'src/grades/entities/grade.entity';
 
 @Entity('users')
 export class User {
@@ -28,4 +35,10 @@ export class User {
 
   @OneToOne(() => StudentProfile, (profile) => profile.user)
   studentProfile: StudentProfile;
+
+  @OneToMany(() => Grade, (grade) => grade.student)
+  studentGrades: Grade[];
+
+  @OneToMany(() => Grade, (grade) => grade.teacher)
+  teacherGrades: Grade[];
 }
