@@ -17,6 +17,9 @@ export class StudentProfile {
   @JoinColumn()
   user: User;
 
-  @ManyToOne(() => SchoolClass, (cls) => cls.students)
-  schoolClass: SchoolClass;
+  @ManyToOne(() => SchoolClass, (cls) => cls.students, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  schoolClass: SchoolClass | null;
 }
