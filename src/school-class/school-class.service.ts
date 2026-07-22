@@ -73,17 +73,15 @@ export class SchoolClassService {
   }
 
   async delete(id: number) {
-    const schoolClass = await this.findOne(id);
-
-    await this.schoolClassRepository.delete(schoolClass.id);
+    await this.findOne(id);
+    await this.schoolClassRepository.delete(id);
 
     return { message: 'Class deleted sucessfully' };
   }
 
-  async addStudent(classId: number, studentId: number) {
-    const schoolClass = await this.findOne(classId);
+  private async findStudentOrFail(id: number) {
     const student = await this.studentRepository.findOne({
-      where: { id: studentId },
+      where: { id },
       relations: { schoolClass: true, user: true },
     });
 
@@ -91,8 +89,15 @@ export class SchoolClassService {
       throw new NotFoundException('Student not found');
     }
 
+    return student;
+  }
+
+  async addStudent(classId: number, studentId: number) {
+    const schoolClass = await this.findOne(classId);
+    const student = await this.findStudentOrFail(studentId);
+
     if (student.schoolClass) {
-      throw new BadRequestException('Student is already in a class');
+      throw new BadRequestException('Student is already assigned to a class');
     }
 
     student.schoolClass = schoolClass;
@@ -107,18 +112,12 @@ export class SchoolClassService {
   }
 
   async updateStudentClass(classId: number, studentId: number) {
-    const schoolClass = await this.findOne(studentId);
+    const schoolClass = await this.findOne(classId);
 
-    const student = await this.studentRepository.findOne({
-      where: { id: classId },
-      relations: { schoolClass: true, user: true },
-    });
-    if (!student) {
-      throw new NotFoundException('Student not found');
-    }
+    const student = await this.findStudentOrFail(studentId);
 
-    if (student.schoolClass) {
-      throw new BadRequestException('Student is not yet in any class');
+    if (!student.schoolClass) {
+      throw new BadRequestException('Student is not assigned to any class');
     }
 
     student.schoolClass = schoolClass;
@@ -133,42 +132,87 @@ export class SchoolClassService {
   }
 
   async removeStudentFromClass(studentId: number) {
-    const student = await this.studentRepository.findOne({
-      where: { id: studentId },
-      relations: { schoolClass: true },
-    });
-
-    if (!student) {
-      throw new NotFoundException('Student not found');
-    }
+    const student = await this.findStudentOrFail(studentId);
 
     if (!student.schoolClass) {
-      throw new BadRequestException('Student is not in any class');
+      throw new BadRequestException('Student is not assigned to any class');
     }
 
     student.schoolClass = null;
 
     await this.studentRepository.save(student);
 
-    return { message: 'Student removed from class successfully', studentId };
+    return {
+      message: 'Student removed from class successfully',
+      student: student.user.name,
+    };
   }
 
-  async addTeacher(classId: number, teacherId: number) {
-    const schoolClass = await this.findOne(classId);
+  private async findTeacherOrFail(id: number) {
     const teacher = await this.teacherRepository.findOne({
-      where: { id: teacherId },
-      relations: { schoolClass: true },
+      where: { id },
+      relations: { schoolClass: true, user: true },
     });
     if (!teacher) {
       throw new NotFoundException('Teacher not found');
     }
 
+    return teacher;
+  }
+
+  async addTeacher(classId: number, teacherId: number) {
+    const schoolClass = await this.findOne(classId);
+    const teacher = await this.findTeacherOrFail(teacherId);
+
     if (teacher.schoolClass) {
-      throw new BadRequestException('Student is not yet in any class');
+      throw new BadRequestException('Teacher is already assigned to a class');
     }
 
     teacher.schoolClass = schoolClass;
 
-    return this.teacherRepository.save(teacher);
+    await this.teacherRepository.save(teacher);
+
+    return {
+      teacher: teacher.user.name,
+      gradeLevel: teacher.schoolClass.gradeLevel,
+      section: teacher.schoolClass.section,
+    };
+  }
+
+  async updateTeacherClass(classId: number, teacherId: number) {
+    const schoolClass = await this.findOne(classId);
+
+    const teacher = await this.findTeacherOrFail(teacherId);
+
+    if (!teacher.schoolClass) {
+      throw new BadRequestException('Teacher is not assigned to any class');
+    }
+
+    teacher.schoolClass = schoolClass;
+
+    await this.teacherRepository.save(teacher);
+
+    return {
+      teacher: teacher.user.name,
+      gradeLevel: teacher.schoolClass.gradeLevel,
+      section: teacher.schoolClass.section,
+    };
+  }
+
+  async removeTeacherFromClass(teacherId: number) {
+    const teacher = await this.findTeacherOrFail(teacherId);
+
+    if (!teacher.schoolClass) {
+      throw new BadRequestException('Teacher is not assigned to any class');
+    }
+
+    teacher.schoolClass = null;
+
+    await this.teacherRepository.save(teacher);
+
+    return {
+      message: 'Teacher removed from class successfully',
+      teacher: teacher.user.name,
+    };
   }
 }

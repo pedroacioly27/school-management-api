@@ -29,5 +29,5 @@ export class TeacherProfile {
     nullable: true,
     onDelete: 'SET NULL',
   })
-  schoolClass: SchoolClass;
+  schoolClass: SchoolClass | null;
 }

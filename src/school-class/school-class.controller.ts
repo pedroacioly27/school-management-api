@@ -31,7 +31,10 @@ export class SchoolClassController {
   }
 
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, data: UpdateSchoolClassDto) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() data: UpdateSchoolClassDto,
+  ) {
     return this.classService.update(id, data);
   }
 
@@ -40,32 +43,45 @@ export class SchoolClassController {
     return this.classService.delete(id);
   }
 
-  @Post(':classId/students/:studentId')
+  @Post(':classId/students')
   addStudent(
     @Param('classId', ParseIntPipe) classId: number,
-    @Param('studentId', ParseIntPipe) studentId: number,
+    @Body('studentId', ParseIntPipe) studentId: number,
   ) {
     return this.classService.addStudent(classId, studentId);
   }
 
-  @Patch('students/:studentId/class')
+  @Delete('students/:studentId/class')
   removeStudent(@Param('studentId', ParseIntPipe) studentId: number) {
     return this.classService.removeStudentFromClass(studentId);
   }
 
-  @Patch(':classId/students/:studentId')
+  @Patch('students/:studentId/class')
   updateStudentClass(
-    @Param('classId', ParseIntPipe) classId: number,
     @Param('studentId', ParseIntPipe) studentId: number,
+    @Body('classId', ParseIntPipe) classId: number,
   ) {
     return this.classService.updateStudentClass(classId, studentId);
   }
 
-  @Post(':classId/teachers/:teacherId')
+  @Post(':classId/teachers')
   addTeacher(
     @Param('classId', ParseIntPipe) classId: number,
-    @Param('teacherId', ParseIntPipe) teacherId: number,
+    @Body('teacherId', ParseIntPipe) teacherId: number,
   ) {
     return this.classService.addTeacher(classId, teacherId);
+  }
+
+  @Delete('teachers/:teacherId/class')
+  removeTeacher(@Param('teacherId', ParseIntPipe) teacherId: number) {
+    return this.classService.removeTeacherFromClass(teacherId);
+  }
+
+  @Patch('teachers/:teacherId/class')
+  updateTeacherClass(
+    @Param('teacherId', ParseIntPipe) teacherId: number,
+    @Body('classId', ParseIntPipe) classId: number,
+  ) {
+    return this.classService.updateTeacherClass(classId, teacherId);
   }
 }
