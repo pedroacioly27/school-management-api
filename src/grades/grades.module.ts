@@ -2,12 +2,12 @@ import { Module } from '@nestjs/common';
 import { GradesService } from './grades.service';
 import { GradesController } from './grades.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from 'src/users/entities/user.entity';
 import { Grade } from './entities/grade.entity';
 import { TeacherProfile } from 'src/users/entities/teacher-profile.entity';
+import { StudentProfile } from 'src/users/entities/student-profile.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Grade, TeacherProfile])],
+  imports: [TypeOrmModule.forFeature([Grade, TeacherProfile, StudentProfile])],
   providers: [GradesService],
   controllers: [GradesController],
 })

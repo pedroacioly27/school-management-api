@@ -1,4 +1,4 @@
-export enum Term {
+export enum Bimester {
   FIRST = 'FIRST',
   SECOND = 'SECOND',
   THIRD = 'THIRD',

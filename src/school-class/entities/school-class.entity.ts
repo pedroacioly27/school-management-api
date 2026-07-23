@@ -1,5 +1,6 @@
 import { GradeLevel } from 'src/common/enums/grade-level.enum';
 import { Section } from 'src/common/enums/section.enum';
+import { Grade } from 'src/grades/entities/grade.entity';
 import { StudentProfile } from 'src/users/entities/student-profile.entity';
 import { TeacherProfile } from 'src/users/entities/teacher-profile.entity';
 import {
@@ -27,4 +28,7 @@ export class SchoolClass {
 
   @OneToMany(() => TeacherProfile, (teacher) => teacher.schoolClass)
   teachers: TeacherProfile[];
+
+  @OneToMany(() => Grade, (grade) => grade.schoolClass)
+  grades: Grade[];
 }

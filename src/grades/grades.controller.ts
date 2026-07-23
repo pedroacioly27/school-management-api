@@ -13,7 +13,4 @@ export class GradesController {
   create(@Body() dto: CreateGradeDto, @Req() req) {
     return this.gradeService.create(dto, req);
   }
-
-  @Post()
-  testSchool() {}
 }

@@ -6,58 +6,80 @@ import {
 } from '@nestjs/common';
 import { CreateGradeDto } from './dto/create-grade.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { Grade } from './entities/grade.entity';
-import { Role } from 'src/common/enums/role.enum';
 import { TeacherProfile } from 'src/users/entities/teacher-profile.entity';
+import { StudentProfile } from 'src/users/entities/student-profile.entity';
 
 @Injectable()
 export class GradesService {
   constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
+    @InjectRepository(StudentProfile)
+    private studentRepository: Repository<StudentProfile>,
     @InjectRepository(Grade)
     private gradeRepository: Repository<Grade>,
     @InjectRepository(TeacherProfile)
     private teacherProfileRepository: Repository<TeacherProfile>,
   ) {}
   async create(dto: CreateGradeDto, req) {
-    if (dto.value < 0 || dto.value > 10) {
-      throw new BadRequestException('Grade must be between 0 and 10');
-    }
-
-    const student = await this.userRepository.findOne({
+    const student = await this.studentRepository.findOne({
       where: { id: dto.studentId },
+      relations: {
+        schoolClass: true,
+      },
     });
 
-    if (!student || student.role !== Role.STUDENT) {
+    if (!student) {
       throw new NotFoundException('Student not found');
+    }
+
+    if (!student.schoolClass) {
+      throw new BadRequestException('Student has no class');
     }
 
     const teacherProfile = await this.teacherProfileRepository.findOne({
       where: { user: { id: req.user.sub } },
-      relations: { user: true },
+      relations: { schoolClass: true },
     });
 
     if (!teacherProfile) {
       throw new UnauthorizedException();
     }
 
+    if (!teacherProfile.schoolClass) {
+      throw new BadRequestException('Teacher has no class');
+    }
+    if (teacherProfile.schoolClass.id !== student.schoolClass.id) {
+      throw new BadRequestException(
+        'Teacher and student are not in the same class',
+      );
+    }
+
+    const existingGrade = await this.gradeRepository.findOne({
+      where: {
+        student: { id: dto.studentId },
+        subject: teacherProfile.subject,
+        bimester: dto.bimester,
+        gradeType: dto.gradeType,
+      },
+    });
+
+    if (existingGrade) {
+      throw new BadRequestException('Grade already exists');
+    }
+
     const grade = this.gradeRepository.create({
       value: dto.value,
       subject: teacherProfile.subject,
+      bimester: dto.bimester,
+      gradeType: dto.gradeType,
       student,
-      teacher: teacherProfile.user,
+      teacher: teacherProfile,
+      schoolClass: student.schoolClass,
     });
 
     await this.gradeRepository.save(grade);
 
-    return {
-      subject: grade.subject,
-      value: grade.value,
-      student: student.name,
-      teacher: teacherProfile.user.name,
-    };
+    return grade;
   }
 }
