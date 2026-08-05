@@ -1,98 +1,365 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🎓 Smart School API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API REST para gerenciamento escolar desenvolvida utilizando **NestJS**, com autenticação via JWT, controle de acesso por perfil de usuário e gerenciamento de alunos, professores, turmas e notas.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+O projeto foi desenvolvido com foco em aplicar conceitos utilizados no desenvolvimento backend profissional, como arquitetura modular, validações, autenticação segura e relacionamento entre entidades utilizando banco de dados relacional.
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+# 🚀 Tecnologias utilizadas
 
-## Project setup
+## Backend
 
-```bash
-$ npm install
+* Node.js
+* NestJS
+* TypeScript
+* TypeORM
+* PostgreSQL
+* JWT (JSON Web Token)
+* Bcrypt
+* Class Validator
+* Class Transformer
+
+## Ferramentas
+
+* GitHub
+* Insomnia
+
+---
+
+# 📚 Sobre o projeto
+
+O **Smart School API** é um sistema backend para gerenciamento de uma instituição de ensino.
+
+A aplicação permite controlar usuários com diferentes níveis de acesso, organizar turmas escolares e realizar o gerenciamento de notas dos alunos.
+
+O sistema utiliza autenticação baseada em JWT e autorização através de Roles, garantindo que cada usuário tenha acesso apenas às funcionalidades permitidas.
+
+---
+
+# 🔐 Controle de usuários e permissões
+
+O sistema possui três tipos de usuários:
+
+## 👨‍💼 Diretor
+
+Responsável pelo gerenciamento administrativo.
+
+Possui permissões para:
+
+* Criar professores
+* Gerenciar alunos
+* Criar turmas
+* Administrar informações acadêmicas
+
+---
+
+## 👨‍🏫 Professor
+
+Responsável pelo acompanhamento dos alunos.
+
+Possui permissões para:
+
+* Registrar notas
+* Consultar informações das turmas
+* Gerenciar avaliações dos alunos
+
+---
+
+## 👨‍🎓 Aluno
+
+Usuário responsável por acompanhar seu desempenho acadêmico.
+
+Possui permissões para:
+
+* Consultar seu perfil
+* Visualizar suas notas
+
+---
+
+# 🏗️ Arquitetura do projeto
+
+O projeto segue a arquitetura modular proposta pelo NestJS.
+
+Estrutura principal:
+
+```
+src
+│
+├── auth
+│   ├── guards
+│   └── services
+│
+├── users
+│   ├── controllers
+│   ├── services
+│   ├── dto
+│   └── entities
+│
+├── grades
+│   ├── controllers
+│   ├── services
+│   ├── dto
+│   └── entities
+│
+├── school-class
+│   ├── controllers
+│   ├── services
+│   ├── dto
+│   └── entities
+│
+└── common
+    └── enums
 ```
 
-## Compile and run the project
+---
 
-```bash
-# development
-$ npm run start
+# 🗄️ Principais entidades
 
-# watch mode
-$ npm run start:dev
+## User
 
-# production mode
-$ npm run start:prod
+Responsável pela autenticação dos usuários.
+
+Principais informações:
+
+* Nome
+* Email
+* Senha criptografada
+* Role
+
+Relacionamentos:
+
+* Possui um StudentProfile ou TeacherProfile
+
+---
+
+## StudentProfile
+
+Representa o perfil acadêmico do aluno.
+
+Relacionamentos:
+
+* Pertence a um usuário
+* Possui notas
+* Pode estar vinculado a uma turma
+
+---
+
+## TeacherProfile
+
+Representa o perfil do professor.
+
+Relacionamentos:
+
+* Pertence a um usuário
+* Possui uma disciplina
+* Pode estar vinculado a turmas
+* Responsável pelo lançamento de notas
+
+---
+
+## Grade
+
+Representa as notas dos alunos.
+
+Relacionamentos:
+
+* Pertence a um aluno
+* Criada por um professor
+* Possui uma disciplina
+
+---
+
+## SchoolClass
+
+Representa uma turma escolar.
+
+Relacionamentos:
+
+* Possui alunos
+* Possui professores
+
+---
+
+# 🔑 Autenticação
+
+A autenticação utiliza JWT.
+
+Fluxo:
+
+1. Usuário realiza login informando email e senha
+2. A API valida as credenciais
+3. A senha é comparada utilizando bcrypt
+4. Um token JWT é gerado
+5. O token permite acesso às rotas protegidas
+
+Exemplo de utilização:
+
+```
+Authorization: Bearer TOKEN
 ```
 
-## Run tests
+---
+
+# 🛡️ Segurança
+
+Foram implementadas algumas práticas de segurança:
+
+* Senhas armazenadas utilizando hash com bcrypt
+* Autenticação utilizando JWT
+* Proteção de rotas através de Guards
+* Controle de permissões utilizando Roles
+* Validação de dados recebidos através de DTOs
+
+---
+
+# 📌 Funcionalidades implementadas
+
+## Usuários
+
+✔ Cadastro de usuários
+✔ Login
+✔ Criptografia de senha
+✔ Controle de acesso por perfil
+
+---
+
+## Professores
+
+✔ Criação de professores
+✔ Associação com disciplina
+✔ Perfil específico de professor
+
+---
+
+## Alunos
+
+✔ Cadastro de alunos
+✔ Perfil específico de aluno
+✔ Associação com turma
+✔ Consulta de notas
+
+---
+
+## Notas
+
+✔ Cadastro de notas
+✔ Associação entre aluno e professor
+✔ Controle por disciplina
+
+---
+
+## Turmas
+
+✔ Criação de turmas
+✔ Adicionar alunos
+✔ Adicionar professores
+✔ Gerenciamento dos vínculos
+
+---
+
+# ⚙️ Como executar o projeto
+
+## Pré-requisitos
+
+Antes de iniciar, tenha instalado:
+
+* Node.js
+* PostgreSQL
+* Git
+
+---
+
+## Clone o repositório
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+git clone https://github.com/pedroacioly27/school-management-api.git
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Entre na pasta:
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+cd school-management-api
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Instale as dependências:
 
-## Resources
+```bash
+npm install
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+---
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+# 🔧 Configuração do ambiente
 
-## Support
+Crie um arquivo `.env` na raiz do projeto:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```env
+DATABASE_HOST=localhost
+DATABASE_PORT=5432
+DATABASE_USERNAME=postgres
+DATABASE_PASSWORD=sua_senha
+DATABASE_NAME=smart_school
 
-## Stay in touch
+JWT_SECRET=sua_secret_key
+JWT_EXPIRATION_TIME=1d
+```
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+---
 
-## License
+# 🗃️ Banco de dados
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Crie o banco PostgreSQL:
+
+```sql
+CREATE DATABASE smart_school;
+```
+
+Após configurar o ambiente, execute:
+
+```bash
+npm run start:dev
+```
+
+A aplicação estará disponível em:
+
+```
+http://localhost:3000
+```
+
+---
+
+# 📂 Próximas melhorias
+
+Algumas funcionalidades planejadas:
+
+* [ ] Implementação de Swagger para documentação da API
+* [ ] Criação de Seeds para ambiente de demonstração
+* [ ] Testes unitários
+* [ ] Dockerização da aplicação
+* [ ] Deploy em ambiente cloud
+* [ ] Dashboard administrativo
+
+---
+
+# 🎯 Objetivo do projeto
+
+Este projeto foi desenvolvido para aplicar na prática conhecimentos de desenvolvimento backend utilizando NestJS, explorando:
+
+* Construção de APIs REST
+* Autenticação e autorização
+* Arquitetura modular
+* ORM e banco de dados relacional
+* Boas práticas de organização de código
+
+---
+
+# 👨‍💻 Autor
+
+**Pedro Acioly**
+
+Backend Developer | Node.js | TypeScript
+
+GitHub:
+
+https://github.com/pedroacioly27
