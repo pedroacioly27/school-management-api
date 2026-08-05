@@ -98,41 +98,60 @@ export class GradesService {
 
   async findall(filters: FilterGradeDto, req) {
     const where: FindOptionsWhere<Grade> = {};
-
     const user = await this.userRepository.findOne({
       where: { id: req.user.sub },
-      relations: { studentProfile: true },
+      relations: {
+        studentProfile: { schoolClass: true },
+        teacherProfile: { schoolClass: true },
+      },
     });
     if (!user) {
-      throw new BadRequestException('You need to be logged in');
+      throw new UnauthorizedException('You need to be logged in');
     }
     if (user.role === Role.STUDENT) {
-      if (filters.studentId) {
-        if (filters.studentId !== user.studentProfile.id) {
-          throw new ForbiddenException('You can only see your own report');
+      where.student = { id: user.studentProfile.id };
+      if (filters.classId) {
+        if (
+          !user.studentProfile.schoolClass ||
+          filters.classId !== user.studentProfile.schoolClass.id
+        ) {
+          throw new ForbiddenException('Invalid class filter');
         }
-        where.student = { id: filters.studentId };
-      }
-      if (
-        filters.classId &&
-        user.studentProfile.schoolClass &&
-        filters.classId === user.studentProfile.schoolClass.id
-      ) {
         where.schoolClass = { id: filters.classId };
       }
-    } else if (req.user.role === Role.TEACHER) {
-      where.teacher = { user: { id: req.user.sub } };
+    } else if (user.role === Role.TEACHER) {
+      where.teacher = { user: { id: user.id } };
       if (filters.studentId) {
+        const student = await this.studentRepository.findOne({
+          where: { id: filters.studentId },
+          relations: { schoolClass: true },
+        });
+        if (!student) {
+          throw new NotFoundException('Student Not Found');
+        }
+
+        if (
+          !student.schoolClass ||
+          !user.teacherProfile.schoolClass ||
+          student.schoolClass.id !== user.teacherProfile.schoolClass.id
+        ) {
+          throw new ForbiddenException(
+            'You cannot view the grades of students from other classes',
+          );
+        }
+
         where.student = { id: filters.studentId };
       }
-      if (
-        filters.classId &&
-        user.teacherProfile.schoolClass &&
-        filters.classId === user.teacherProfile.schoolClass.id
-      ) {
+      if (filters.classId) {
+        if (
+          !user.teacherProfile.schoolClass ||
+          filters.classId !== user.teacherProfile.schoolClass.id
+        ) {
+          throw new ForbiddenException('Invalid class filter');
+        }
         where.schoolClass = { id: filters.classId };
       }
-    } else if (req.user.role === Role.DIRECTOR) {
+    } else if (user.role === Role.DIRECTOR) {
       if (filters.studentId) {
         where.student = { id: filters.studentId };
       }
@@ -143,9 +162,6 @@ export class GradesService {
 
     if (filters.bimester) {
       where.bimester = filters.bimester;
-    }
-    if (req.user.role === Role.TEACHER) {
-      where.teacher = { user: { id: req.user.sub } };
     }
 
     return this.gradeRepository.find({
@@ -201,10 +217,14 @@ export class GradesService {
   async getReportCard(studentId: number, req) {
     const loggedUser = await this.userRepository.findOne({
       where: { id: req.user.sub },
-      relations: { studentProfile: true, teacherProfile: true },
+      relations: {
+        studentProfile: { schoolClass: true },
+        teacherProfile: { schoolClass: true },
+      },
     });
     const student = await this.studentRepository.findOne({
       where: { id: studentId },
+      relations: { schoolClass: true },
     });
 
     if (!student) {
@@ -216,12 +236,19 @@ export class GradesService {
     }
 
     if (loggedUser.role === Role.STUDENT) {
-      if (student.id !== studentId) {
+      if (!loggedUser.studentProfile) {
+        throw new ForbiddenException('Invalid student account');
+      }
+      if (student.id !== loggedUser.studentProfile.id) {
         throw new ForbiddenException('You can only see your own report');
       }
     }
     if (loggedUser.role === Role.TEACHER) {
-      if (loggedUser.teacherProfile.schoolClass !== student.schoolClass) {
+      if (
+        !loggedUser.teacherProfile.schoolClass ||
+        !student.schoolClass ||
+        loggedUser.teacherProfile.schoolClass.id !== student.schoolClass.id
+      ) {
         throw new ForbiddenException(
           'You cannot view the grades of students from other classes',
         );
@@ -259,12 +286,15 @@ export class GradesService {
         };
         const bimesters: BimesterReporter[] = Object.values(subject.bimesters)
           .map((bimester: BimesterMap) => {
-            const average = Number(
-              (
-                bimester.grades.reduce((sum, value) => sum + value, 0) /
-                bimester.grades.length
-              ).toFixed(2),
-            );
+            const average =
+              bimester.grades.length > 0
+                ? Number(
+                    (
+                      bimester.grades.reduce((sum, value) => sum + value, 0) /
+                      bimester.grades.length
+                    ).toFixed(2),
+                  )
+                : 0;
 
             return {
               ...bimester,
@@ -274,11 +304,15 @@ export class GradesService {
           .sort((a, b) => {
             return bimesterOrder[a.bimester] - bimesterOrder[b.bimester];
           });
-        const finalAverage: number = Number(
-          (
-            bimesters.reduce((sum, b) => sum + b.average, 0) / bimesters.length
-          ).toFixed(2),
-        );
+        const finalAverage =
+          bimesters.length > 0
+            ? Number(
+                (
+                  bimesters.reduce((sum, b) => sum + b.average, 0) /
+                  bimesters.length
+                ).toFixed(2),
+              )
+            : 0;
 
         return {
           subject: subject.subject,
