@@ -5,6 +5,7 @@ import { SchoolClassController } from './school-class.controller';
 import { SchoolClassService } from './school-class.service';
 import { TeacherProfile } from 'src/users/entities/teacher-profile.entity';
 import { StudentProfile } from 'src/users/entities/student-profile.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Module({
   imports: [

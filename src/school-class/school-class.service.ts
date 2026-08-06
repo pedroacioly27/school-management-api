@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -47,9 +48,9 @@ export class SchoolClassService {
     });
   }
 
-  async findOne(id: number) {
+  async findOne(ClassId: number) {
     const schoolClass = await this.schoolClassRepository.findOne({
-      where: { id },
+      where: { id: ClassId },
       relations: {
         students: true,
         teachers: true,
@@ -62,8 +63,8 @@ export class SchoolClassService {
     return schoolClass;
   }
 
-  async update(id: number, data: UpdateSchoolClassDto) {
-    const schoolClass = await this.findOne(id);
+  async update(ClassId: number, data: UpdateSchoolClassDto) {
+    const schoolClass = await this.findOne(ClassId);
 
     Object.assign(schoolClass, data);
 
@@ -72,16 +73,16 @@ export class SchoolClassService {
     return schoolClass;
   }
 
-  async delete(id: number) {
-    await this.findOne(id);
-    await this.schoolClassRepository.delete(id);
+  async delete(ClassId: number) {
+    await this.findOne(ClassId);
+    await this.schoolClassRepository.delete(ClassId);
 
     return { message: 'Class deleted sucessfully' };
   }
 
-  private async findStudentOrFail(id: number) {
+  private async findStudentOrFail(studentId: number) {
     const student = await this.studentRepository.findOne({
-      where: { id },
+      where: { id: studentId },
       relations: { schoolClass: true, user: true },
     });
 
@@ -148,9 +149,9 @@ export class SchoolClassService {
     };
   }
 
-  private async findTeacherOrFail(id: number) {
+  private async findTeacherOrFail(teacherId: number) {
     const teacher = await this.teacherRepository.findOne({
-      where: { id },
+      where: { id: teacherId },
       relations: { schoolClass: true, user: true },
     });
     if (!teacher) {
@@ -214,5 +215,20 @@ export class SchoolClassService {
       message: 'Teacher removed from class successfully',
       teacher: teacher.user.name,
     };
+  }
+
+  async getTeacherClassById(ClassId: number, req) {
+    const schoolClass = await this.schoolClassRepository.findOne({
+      where: { id: ClassId, teachers: { id: req.user.sub } },
+      relations: {
+        teachers: true,
+        students: true,
+      },
+    });
+
+    if (!schoolClass) {
+      throw new ForbiddenException('You do not have access to this class');
+    }
+    return schoolClass;
   }
 }

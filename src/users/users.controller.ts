@@ -4,6 +4,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import { RolesGuard } from 'src/auth/auth.roles.guard';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('users')
 export class UsersController {
@@ -13,6 +14,7 @@ export class UsersController {
     return this.usersService.createStudent(data);
   }
 
+  @ApiBearerAuth()
   @UseGuards(AuthGuard, new RolesGuard(['DIRECTOR']))
   @Post('teacher')
   createTeacher(@Body() data: CreateTeacherDto) {
