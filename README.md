@@ -1,8 +1,8 @@
 # 🎓 Smart School API
 
-API REST para gerenciamento escolar desenvolvida utilizando **NestJS**, com autenticação via JWT, controle de acesso por perfil de usuário e gerenciamento de alunos, professores, turmas e notas.
+API REST para gerenciamento escolar desenvolvida com **NestJS**, incluindo autenticação com JWT, controle de acesso por perfis (RBAC), documentação com Swagger e dados iniciais via Seed.
 
-O projeto foi desenvolvido com foco em aplicar conceitos utilizados no desenvolvimento backend profissional, como arquitetura modular, validações, autenticação segura e relacionamento entre entidades utilizando banco de dados relacional.
+O projeto foi construído com foco em práticas reais de desenvolvimento backend profissional, como arquitetura modular, segurança, validações, relacionamento entre entidades e organização escalável de código.
 
 ---
 
@@ -10,30 +10,43 @@ O projeto foi desenvolvido com foco em aplicar conceitos utilizados no desenvolv
 
 ## Backend
 
-* Node.js
-* NestJS
-* TypeScript
-* TypeORM
-* PostgreSQL
-* JWT (JSON Web Token)
-* Bcrypt
-* Class Validator
-* Class Transformer
+- Node.js
+- NestJS
+- TypeScript
+- TypeORM
+- PostgreSQL
+
+## Segurança & Validação
+
+- JWT (JSON Web Token)
+- Bcrypt
+- Class Validator
+- Class Transformer
+
+## Documentação & Dados
+
+- Swagger (OpenAPI)
+- Seeds (dados iniciais)
 
 ## Ferramentas
 
-* GitHub
-* Insomnia
+- Git & GitHub
+- Insomnia
 
 ---
 
 # 📚 Sobre o projeto
 
-O **Smart School API** é um sistema backend para gerenciamento de uma instituição de ensino.
+O **Smart School API** é um sistema backend completo para gerenciamento de uma instituição de ensino.
 
-A aplicação permite controlar usuários com diferentes níveis de acesso, organizar turmas escolares e realizar o gerenciamento de notas dos alunos.
+A aplicação permite:
 
-O sistema utiliza autenticação baseada em JWT e autorização através de Roles, garantindo que cada usuário tenha acesso apenas às funcionalidades permitidas.
+- Controle de usuários com diferentes permissões
+- Gerenciamento de turmas
+- Lançamento e consulta de notas
+- Organização de alunos e professores
+
+Toda a API é protegida por autenticação JWT e autorização baseada em roles, garantindo segurança e controle de acesso.
 
 ---
 
@@ -45,43 +58,42 @@ O sistema possui três tipos de usuários:
 
 Responsável pelo gerenciamento administrativo.
 
-Possui permissões para:
+Permissões:
 
-* Criar professores
-* Gerenciar alunos
-* Criar turmas
-* Administrar informações acadêmicas
+- Criar professores
+- Gerenciar alunos
+- Criar turmas
+- Vincular alunos e professores
+- Administrar informações acadêmicas
 
 ---
 
 ## 👨‍🏫 Professor
 
-Responsável pelo acompanhamento dos alunos.
+Responsável pelo acompanhamento acadêmico.
 
-Possui permissões para:
+Permissões:
 
-* Registrar notas
-* Consultar informações das turmas
-* Gerenciar avaliações dos alunos
+- Registrar notas
+- Consultar turmas
+- Gerenciar avaliações dos alunos
 
 ---
 
 ## 👨‍🎓 Aluno
 
-Usuário responsável por acompanhar seu desempenho acadêmico.
+Usuário final do sistema.
 
-Possui permissões para:
+Permissões:
 
-* Consultar seu perfil
-* Visualizar suas notas
+- Visualizar perfil
+- Consultar suas notas
 
 ---
 
 # 🏗️ Arquitetura do projeto
 
-O projeto segue a arquitetura modular proposta pelo NestJS.
-
-Estrutura principal:
+O projeto segue a arquitetura modular do NestJS:
 
 ```
 src
@@ -118,82 +130,72 @@ src
 
 ## User
 
-Responsável pela autenticação dos usuários.
+Responsável pela autenticação.
 
-Principais informações:
-
-* Nome
-* Email
-* Senha criptografada
-* Role
+- Nome
+- Email
+- Senha criptografada
+- Role
 
 Relacionamentos:
 
-* Possui um StudentProfile ou TeacherProfile
+- 1:1 com StudentProfile ou TeacherProfile
 
 ---
 
 ## StudentProfile
 
-Representa o perfil acadêmico do aluno.
+Perfil acadêmico do aluno.
 
-Relacionamentos:
-
-* Pertence a um usuário
-* Possui notas
-* Pode estar vinculado a uma turma
+- Vinculado a um usuário
+- Possui notas
+- Vinculado a uma turma
 
 ---
 
 ## TeacherProfile
 
-Representa o perfil do professor.
+Perfil do professor.
 
-Relacionamentos:
-
-* Pertence a um usuário
-* Possui uma disciplina
-* Pode estar vinculado a turmas
-* Responsável pelo lançamento de notas
+- Vinculado a um usuário
+- Possui disciplina
+- Pode estar em várias turmas
+- Responsável pelas notas
 
 ---
 
 ## Grade
 
-Representa as notas dos alunos.
+Notas dos alunos.
 
-Relacionamentos:
-
-* Pertence a um aluno
-* Criada por um professor
-* Possui uma disciplina
+- Relacionada ao aluno
+- Criada por professor
+- Possui disciplina, tipo e bimestre
 
 ---
 
 ## SchoolClass
 
-Representa uma turma escolar.
+Turma escolar.
 
-Relacionamentos:
-
-* Possui alunos
-* Possui professores
+- Possui alunos
+- Possui professores
 
 ---
 
 # 🔑 Autenticação
 
-A autenticação utiliza JWT.
+A autenticação é feita com JWT.
 
 Fluxo:
 
-1. Usuário realiza login informando email e senha
-2. A API valida as credenciais
-3. A senha é comparada utilizando bcrypt
-4. Um token JWT é gerado
-5. O token permite acesso às rotas protegidas
+1. Usuário faz login com email e senha  
+2. Credenciais são validadas  
+3. Senha comparada com bcrypt  
+4. Token JWT é gerado  
+5. Token permite acesso às rotas protegidas  
 
-Exemplo de utilização:
+Exemplo:
 
 ```
 Authorization: Bearer TOKEN
@@ -203,58 +205,94 @@ Authorization: Bearer TOKEN
 
 # 🛡️ Segurança
 
-Foram implementadas algumas práticas de segurança:
-
-* Senhas armazenadas utilizando hash com bcrypt
-* Autenticação utilizando JWT
-* Proteção de rotas através de Guards
-* Controle de permissões utilizando Roles
-* Validação de dados recebidos através de DTOs
+- Senhas com hash (bcrypt)
+- Autenticação JWT
+- Guards para proteção de rotas
+- Controle de acesso por Roles
+- Validação com DTOs
 
 ---
 
-# 📌 Funcionalidades implementadas
+# 📌 Funcionalidades
 
 ## Usuários
 
-✔ Cadastro de usuários
-✔ Login
-✔ Criptografia de senha
-✔ Controle de acesso por perfil
+✔ Cadastro  
+✔ Login  
+✔ Criptografia de senha  
+✔ Controle de acesso  
 
 ---
 
 ## Professores
 
-✔ Criação de professores
-✔ Associação com disciplina
-✔ Perfil específico de professor
+✔ Criação  
+✔ Associação com disciplina  
+✔ Perfil dedicado  
 
 ---
 
 ## Alunos
 
-✔ Cadastro de alunos
-✔ Perfil específico de aluno
-✔ Associação com turma
-✔ Consulta de notas
+✔ Cadastro  
+✔ Perfil acadêmico  
+✔ Associação com turma  
+✔ Consulta de notas  
 
 ---
 
 ## Notas
 
-✔ Cadastro de notas
-✔ Associação entre aluno e professor
-✔ Controle por disciplina
+✔ Cadastro  
+✔ Relação aluno/professor  
+✔ Controle por disciplina, tipo e bimestre  
 
 ---
 
 ## Turmas
 
-✔ Criação de turmas
-✔ Adicionar alunos
-✔ Adicionar professores
-✔ Gerenciamento dos vínculos
+✔ Criação  
+✔ Adição de alunos  
+✔ Adição de professores  
+✔ Gerenciamento completo  
+
+---
+
+# 📄 Documentação da API (Swagger)
+
+A API possui documentação interativa com Swagger.
+
+Após iniciar o projeto, acesse:
+
+```
+http://localhost:3000/api
+```
+
+Você poderá:
+
+- Visualizar todas as rotas
+- Testar endpoints diretamente
+- Ver schemas e DTOs
+- Autenticar com JWT
+
+---
+
+# 🌱 Seed (Dados iniciais)
+
+O projeto possui Seed para popular o banco com dados de teste.
+
+Inclui:
+
+- Usuários (Diretor, Professores e Alunos)
+- Turmas
+- Notas
+- Disciplinas
+
+Para executar:
+
+```bash
+npm run seed
+```
 
 ---
 
@@ -262,11 +300,9 @@ Foram implementadas algumas práticas de segurança:
 
 ## Pré-requisitos
 
-Antes de iniciar, tenha instalado:
-
-* Node.js
-* PostgreSQL
-* Git
+- Node.js
+- PostgreSQL
+- Git
 
 ---
 
@@ -274,15 +310,12 @@ Antes de iniciar, tenha instalado:
 
 ```bash
 git clone https://github.com/pedroacioly27/school-management-api.git
-```
-
-Entre na pasta:
-
-```bash
 cd school-management-api
 ```
 
-Instale as dependências:
+---
+
+## Instale as dependências
 
 ```bash
 npm install
@@ -292,7 +325,7 @@ npm install
 
 # 🔧 Configuração do ambiente
 
-Crie um arquivo `.env` na raiz do projeto:
+Crie um `.env`:
 
 ```env
 DATABASE_HOST=localhost
@@ -309,19 +342,21 @@ JWT_EXPIRATION_TIME=1d
 
 # 🗃️ Banco de dados
 
-Crie o banco PostgreSQL:
+Crie o banco:
 
 ```sql
 CREATE DATABASE smart_school;
 ```
 
-Após configurar o ambiente, execute:
+---
+
+## Rodar aplicação
 
 ```bash
 npm run start:dev
 ```
 
-A aplicação estará disponível em:
+Acesse:
 
 ```
 http://localhost:3000
@@ -331,26 +366,23 @@ http://localhost:3000
 
 # 📂 Próximas melhorias
 
-Algumas funcionalidades planejadas:
-
-* [ ] Implementação de Swagger para documentação da API
-* [ ] Criação de Seeds para ambiente de demonstração
-* [ ] Testes unitários
-* [ ] Dockerização da aplicação
-* [ ] Deploy em ambiente cloud
-* [ ] Dashboard administrativo
+- [ ] Testes unitários
+- [ ] Dockerização
+- [ ] Deploy em cloud
+- [ ] Dashboard administrativo
+- [ ] Logs e monitoramento
 
 ---
 
 # 🎯 Objetivo do projeto
 
-Este projeto foi desenvolvido para aplicar na prática conhecimentos de desenvolvimento backend utilizando NestJS, explorando:
+Projeto desenvolvido para portfólio com foco em vaga de **Desenvolvedor Backend Júnior**, aplicando:
 
-* Construção de APIs REST
-* Autenticação e autorização
-* Arquitetura modular
-* ORM e banco de dados relacional
-* Boas práticas de organização de código
+- APIs REST com NestJS
+- Autenticação e autorização
+- Arquitetura modular
+- Banco relacional com TypeORM
+- Boas práticas de código
 
 ---
 
@@ -360,6 +392,5 @@ Este projeto foi desenvolvido para aplicar na prática conhecimentos de desenvol
 
 Backend Developer | Node.js | TypeScript
 
-GitHub:
-
+GitHub:  
 https://github.com/pedroacioly27
