@@ -1,4 +1,4 @@
-# 🎓 Smart School API
+# Smart School API
 
 API REST para gerenciamento escolar desenvolvida com **NestJS**, incluindo autenticação com JWT, controle de acesso por perfis (RBAC), documentação com Swagger e dados iniciais via Seed.
 
@@ -6,7 +6,7 @@ O projeto foi construído com foco em práticas reais de desenvolvimento backend
 
 ---
 
-# 🚀 Tecnologias utilizadas
+# Tecnologias utilizadas
 
 ## Backend
 
@@ -35,7 +35,7 @@ O projeto foi construído com foco em práticas reais de desenvolvimento backend
 
 ---
 
-# 📚 Sobre o projeto
+# Sobre o projeto
 
 O **Smart School API** é um sistema backend completo para gerenciamento de uma instituição de ensino.
 
@@ -50,11 +50,11 @@ Toda a API é protegida por autenticação JWT e autorização baseada em roles,
 
 ---
 
-# 🔐 Controle de usuários e permissões
+# Controle de usuários e permissões
 
 O sistema possui três tipos de usuários:
 
-## 👨‍💼 Diretor
+## Diretor
 
 Responsável pelo gerenciamento administrativo.
 
@@ -68,7 +68,7 @@ Permissões:
 
 ---
 
-## 👨‍🏫 Professor
+## Professor
 
 Responsável pelo acompanhamento acadêmico.
 
@@ -80,7 +80,7 @@ Permissões:
 
 ---
 
-## 👨‍🎓 Aluno
+## Aluno
 
 Usuário final do sistema.
 
@@ -91,7 +91,7 @@ Permissões:
 
 ---
 
-# 🏗️ Arquitetura do projeto
+# Arquitetura do projeto
 
 O projeto segue a arquitetura modular do NestJS:
 
@@ -126,7 +126,7 @@ src
 
 ---
 
-# 🗄️ Principais entidades
+# Principais entidades
 
 ## User
 
@@ -183,7 +183,7 @@ Turma escolar.
 
 ---
 
-# 🔑 Autenticação
+# Autenticação
 
 A autenticação é feita com JWT.
 
@@ -203,7 +203,7 @@ Authorization: Bearer TOKEN
 
 ---
 
-# 🛡️ Segurança
+# Segurança
 
 - Senhas com hash (bcrypt)
 - Autenticação JWT
@@ -213,7 +213,7 @@ Authorization: Bearer TOKEN
 
 ---
 
-# 📌 Funcionalidades
+# Funcionalidades
 
 ## Usuários
 
@@ -258,7 +258,7 @@ Authorization: Bearer TOKEN
 
 ---
 
-# 📄 Documentação da API (Swagger)
+# Documentação da API (Swagger)
 
 A API possui documentação interativa com Swagger.
 
@@ -277,7 +277,7 @@ Você poderá:
 
 ---
 
-# 🌱 Seed (Dados iniciais)
+# Seed (Dados iniciais)
 
 O projeto possui Seed para popular o banco com dados de teste.
 
@@ -296,7 +296,7 @@ npm run seed
 
 ---
 
-# ⚙️ Como executar o projeto
+# Como executar o projeto
 
 ## Pré-requisitos
 
@@ -323,7 +323,7 @@ npm install
 
 ---
 
-# 🔧 Configuração do ambiente
+# Configuração do ambiente
 
 Crie um `.env`:
 
@@ -340,7 +340,7 @@ JWT_EXPIRATION_TIME=1d
 
 ---
 
-# 🗃️ Banco de dados
+# Banco de dados
 
 Crie o banco:
 
@@ -364,7 +364,7 @@ http://localhost:3000
 
 ---
 
-# 📂 Próximas melhorias
+# Próximas melhorias
 
 - [ ] Testes unitários
 - [ ] Dockerização
@@ -374,7 +374,7 @@ http://localhost:3000
 
 ---
 
-# 🎯 Objetivo do projeto
+# Objetivo do projeto
 
 Projeto desenvolvido para portfólio com foco em vaga de **Desenvolvedor Backend Júnior**, aplicando:
 
@@ -386,7 +386,7 @@ Projeto desenvolvido para portfólio com foco em vaga de **Desenvolvedor Backend
 
 ---
 
-# 👨‍💻 Autor
+# Autor
 
 **Pedro Acioly**
 
