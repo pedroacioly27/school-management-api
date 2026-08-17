@@ -226,35 +226,35 @@ Authorization: Bearer TOKEN
 
 ## Professores
 
-✔ Criação  
-✔ Associação com disciplina  
-✔ Perfil dedicado  
+-  Criação  
+- Associação com disciplina  
+- Perfil dedicado  
 
 ---
 
 ## Alunos
 
-✔ Cadastro  
-✔ Perfil acadêmico  
-✔ Associação com turma  
-✔ Consulta de notas  
+-  Cadastro  
+-  Perfil acadêmico  
+-  Associação com turma  
+-  Consulta de notas  
 
 ---
 
 ## Notas
 
-✔ Cadastro  
-✔ Relação aluno/professor  
-✔ Controle por disciplina, tipo e bimestre  
+- Cadastro  
+- Relação aluno/professor  
+- Controle por disciplina, tipo e bimestre  
 
 ---
 
 ## Turmas
 
-✔ Criação  
-✔ Adição de alunos  
-✔ Adição de professores  
-✔ Gerenciamento completo  
+- Criação  
+- Adição de alunos  
+- Adição de professores  
+- Gerenciamento completo  
 
 ---
 
